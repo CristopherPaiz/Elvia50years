@@ -6,7 +6,7 @@ const ScrollDown = memo(({ dur = 10000 }) => {
 
   useEffect(() => {
     // Ocultar el texto después de 5 segundos
-    const textTimer = setTimeout(() => setShowText(false), dur / 2);
+    const textTimer = setTimeout(() => setShowText(false), dur);
 
     // Ocultar el icono después de dur
     const iconTimer = setTimeout(() => setShowIcon(false), dur);
@@ -47,10 +47,10 @@ const ScrollDown = memo(({ dur = 10000 }) => {
           {showText && (
             <span
               style={{
-                fontSize: "14px",
+                fontSize: "18px",
                 color: "#333",
                 marginBottom: "8px",
-                animation: "fadeOut 5s ease-in-out forwards",
+                animation: `fadeOut ${dur}s ease-in-out forwards`,
               }}
             >
               Desplaza hacia abajo
@@ -59,7 +59,7 @@ const ScrollDown = memo(({ dur = 10000 }) => {
           <i
             className="fas fa-chevron-down"
             style={{
-              fontSize: "24px",
+              fontSize: "34px",
               color: "#333",
               animation: "bounce 1s infinite",
             }}
