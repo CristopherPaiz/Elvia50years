@@ -7,32 +7,32 @@ import Personas from "./components/Personas";
 import ScrollDown from "./components/ScrollDown";
 import VerticalSlider from "./components/VerticalSlider";
 import SONG from "./assets/birthday.mp3";
-import SILENCE from "./assets/silence.mp3"; // Archivo de audio silencioso
+import SILENCE from "./assets/silence.mp3"; // Archivo de silencio
 
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const realAudioRef = useRef(null);
-  const silentAudioRef = useRef(null);
 
   useEffect(() => {
-    const handleAutoplay = async () => {
-      if (silentAudioRef.current) {
-        try {
-          // Reproducir el audio silencioso para habilitar autoplay
-          await silentAudioRef.current.play();
-          // Una vez habilitado, reproducir el audio real
-          if (realAudioRef.current) {
-            await realAudioRef.current.play();
-            setIsPlaying(true);
-          }
-        } catch (error) {
-          console.log("Error al reproducir el audio:", error);
-          setIsPlaying(false); // Si falla, marcar como no reproduciendo
-        }
+    // Autoplay usando iframe con audio silencioso
+    const silentIframe = document.createElement("iframe");
+    silentIframe.src = SILENCE;
+    silentIframe.allow = "autoplay";
+    silentIframe.style.display = "none";
+    document.body.appendChild(silentIframe);
+
+    // Intentar reproducir el audio real después del iframe
+    silentIframe.onload = () => {
+      if (realAudioRef.current) {
+        realAudioRef.current.play().catch(() => {
+          setIsPlaying(false); // Si no se puede reproducir, desactivamos "On"
+        });
       }
     };
 
-    handleAutoplay();
+    return () => {
+      document.body.removeChild(silentIframe); // Eliminar iframe al desmontar
+    };
   }, []);
 
   const togglePlayPause = () => {
@@ -48,10 +48,10 @@ const App = () => {
 
   return (
     <>
-      {/* Crear referencias para los audios en el DOM sin etiquetas explícitas */}
-      <div ref={silentAudioRef} data-src={SILENCE} style={{ display: "none" }}></div>
-      <div ref={realAudioRef} data-src={SONG} style={{ display: "none" }}></div>
+      {/* Audio real para reproducción */}
+      <audio ref={realAudioRef} src={SONG} loop style={{ display: "none" }} />
 
+      {/* Botón para controlar el audio */}
       <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
         <button
           onClick={togglePlayPause}
@@ -72,6 +72,7 @@ const App = () => {
         </button>
       </div>
 
+      {/* Contenido principal */}
       <FondoAnimado />
       <VerticalSlider>
         <Pagina1 />
