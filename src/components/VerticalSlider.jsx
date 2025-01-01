@@ -20,6 +20,7 @@ const VerticalSlider = ({ children }) => {
     }
   };
 
+  // Navegación por teclado
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "ArrowUp") navigateSlide(-1);
@@ -30,18 +31,19 @@ const VerticalSlider = ({ children }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentSlide]);
 
+  // Manejo del inicio del deslizamiento táctil
   const handleTouchStart = (e) => {
-    if (isInteractiveElement(e.target)) return; // Permite la interacción
     setTouchEnd(null); // Reinicia el punto final
     setTouchStart(e.targetTouches[0].clientY); // Obtén la posición inicial
   };
 
+  // Manejo del movimiento táctil
   const handleTouchMove = (e) => {
-    if (isInteractiveElement(e.target)) return; // Permite la interacción
     setTouchEnd(e.targetTouches[0].clientY); // Actualiza la posición final
     e.preventDefault(); // Previene el comportamiento predeterminado
   };
 
+  // Manejo del final del deslizamiento táctil
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
 
@@ -53,16 +55,13 @@ const VerticalSlider = ({ children }) => {
     if (isDownSwipe) navigateSlide(-1);
   };
 
-  const isInteractiveElement = (element) => {
-    const interactiveTags = ["BUTTON", "A", "INPUT", "TEXTAREA", "SELECT", "LABEL"];
-    return interactiveTags.includes(element.tagName) || element.closest("[data-interactive]");
-  };
-
+  // Previene el comportamiento de pull to refresh
   useEffect(() => {
     const preventPullToRefresh = (e) => {
       if (e.touches.length > 0) {
         const touch = e.touches[0];
         if (touch.clientY < 50) {
+          // Ajusta este valor según sea necesario
           e.preventDefault();
         }
       }
@@ -72,32 +71,41 @@ const VerticalSlider = ({ children }) => {
     return () => window.removeEventListener("touchmove", preventPullToRefresh);
   }, []);
 
+  // Previene completamente el pull to refresh y comportamientos por defecto
   useEffect(() => {
+    // Previene el pull to refresh
+    const preventPullToRefresh = (e) => {
+      e.preventDefault();
+    };
+
+    // Desactiva el scroll elástico en Safari
     document.body.style.overscrollBehavior = "none";
 
-    const preventDefault = (e) => e.preventDefault();
+    // Listeners para prevenir diferentes comportamientos
+    window.addEventListener("touchstart", preventPullToRefresh, { passive: false });
+    window.addEventListener("touchmove", preventPullToRefresh, { passive: false });
+    window.addEventListener("touchend", preventPullToRefresh, { passive: false });
 
-    window.addEventListener("touchstart", preventDefault, { passive: false });
-    window.addEventListener("touchmove", preventDefault, { passive: false });
-    window.addEventListener("touchend", preventDefault, { passive: false });
-
-    document.addEventListener("gesturestart", preventDefault);
-    document.addEventListener("gesturechange", preventDefault);
-    document.addEventListener("gestureend", preventDefault);
+    // Previene el zoom en dispositivos móviles
+    document.addEventListener("gesturestart", (e) => e.preventDefault());
+    document.addEventListener("gesturechange", (e) => e.preventDefault());
+    document.addEventListener("gestureend", (e) => e.preventDefault());
 
     return () => {
+      // Restaura los estilos y remueve los listeners
       document.body.style.overscrollBehavior = "auto";
 
-      window.removeEventListener("touchstart", preventDefault);
-      window.removeEventListener("touchmove", preventDefault);
-      window.removeEventListener("touchend", preventDefault);
+      window.removeEventListener("touchstart", preventPullToRefresh);
+      window.removeEventListener("touchmove", preventPullToRefresh);
+      window.removeEventListener("touchend", preventPullToRefresh);
 
-      document.removeEventListener("gesturestart", preventDefault);
-      document.removeEventListener("gesturechange", preventDefault);
-      document.removeEventListener("gestureend", preventDefault);
+      document.removeEventListener("gesturestart", (e) => e.preventDefault());
+      document.removeEventListener("gesturechange", (e) => e.preventDefault());
+      document.removeEventListener("gestureend", (e) => e.preventDefault());
     };
   }, []);
 
+  // Añade estos estilos globales (puedes ponerlos en un archivo CSS global)
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -115,10 +123,11 @@ const VerticalSlider = ({ children }) => {
 
   return (
     <div
-      className="h-dvh w-full relative overflow-hidden touch-none select-none"
+      className="h-dvh w-full relative overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      // Añade estos props para prevenir comportamientos por defecto
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
     >
@@ -134,6 +143,7 @@ const VerticalSlider = ({ children }) => {
         </div>
       ))}
 
+      {/* Botones de navegación */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-3">
         {Children.map(children, (_, index) => (
           <button
