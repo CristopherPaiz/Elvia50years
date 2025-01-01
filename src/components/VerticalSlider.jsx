@@ -39,7 +39,7 @@ const VerticalSlider = ({ children }) => {
   const handleTouchMove = (e) => {
     if (e.target.tagName === "BUTTON") return; // Permite interacción con botones
     setTouchEnd(e.targetTouches[0].clientY);
-    e.preventDefault();
+    e.preventDefault(); // Previene el comportamiento predeterminado
   };
 
   const handleTouchEnd = () => {
@@ -57,12 +57,27 @@ const VerticalSlider = ({ children }) => {
     const preventPullToRefresh = (e) => {
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        if (touch.clientY < 50) e.preventDefault();
+        if (touch.clientY < 50) e.preventDefault(); // Previene pull-to-refresh solo en la parte superior
       }
     };
 
     window.addEventListener("touchmove", preventPullToRefresh, { passive: false });
     return () => window.removeEventListener("touchmove", preventPullToRefresh);
+  }, []);
+
+  // CSS global para desactivar overscroll y ayudar a prevenir pull-to-refresh
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      html, body {
+        overscroll-behavior: none; /* Bloquea pull-to-refresh en navegadores modernos */
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
   }, []);
 
   return (
