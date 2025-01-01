@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 
-const ScrollDown = ({ dur = 10000 }) => {
+const ScrollDown = memo(({ dur = 10000 }) => {
   const [showText, setShowText] = useState(true);
   const [showIcon, setShowIcon] = useState(true);
 
@@ -68,6 +68,8 @@ const ScrollDown = ({ dur = 10000 }) => {
       )}
     </>
   );
-};
+});
+
+ScrollDown.displayName = "ScrollDown";
 
 export default ScrollDown;

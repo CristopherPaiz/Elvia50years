@@ -1,4 +1,5 @@
-const FondoAnimado = () => {
+import { memo } from "react";
+const FondoAnimado = memo(() => {
   return (
     <div className="fixed inset-0 -z-10 bg-gradient-to-br from-yellow-100/50 via-red-100/50 to-violet-200/50 animate-gradient-blur">
       <div className="absolute inset-0 overflow-hidden">
@@ -54,6 +55,8 @@ const FondoAnimado = () => {
       `}</style>
     </div>
   );
-};
+});
+
+FondoAnimado.displayName = "FondoAnimado";
 
 export default FondoAnimado;

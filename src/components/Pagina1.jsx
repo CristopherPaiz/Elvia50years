@@ -1,6 +1,7 @@
+import { memo } from "react";
 import TextoAnimado from "./TextoAnimado";
 
-const Pagina1 = () => {
+const Pagina1 = memo(() => {
   return (
     <div className="flex flex-col items-center justify-center h-dvh">
       <div className="h-[100px] flex justify-start flex-col">
@@ -13,6 +14,8 @@ const Pagina1 = () => {
       </div>
     </div>
   );
-};
+});
+
+Pagina1.displayName = "Pagina1";
 
 export default Pagina1;

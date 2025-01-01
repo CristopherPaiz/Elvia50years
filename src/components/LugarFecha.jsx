@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 
 const getNamesAndPassesFromURL = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -23,7 +23,7 @@ const getNamesAndPassesFromURL = () => {
   return { names, pases };
 };
 
-const LugarFecha = () => {
+const LugarFecha = memo(() => {
   const [names, setNames] = useState([]);
   const [pases, setPases] = useState(0);
 
@@ -144,6 +144,8 @@ const LugarFecha = () => {
       </div>
     </div>
   );
-};
+});
+
+LugarFecha.displayName = "LugarFecha";
 
 export default LugarFecha;

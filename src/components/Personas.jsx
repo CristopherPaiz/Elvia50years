@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import borde from "../assets/borde.webp";
 import Elvia from "../assets/Elvia.jpg";
 
@@ -11,7 +11,7 @@ const getNamesFromURL = () => {
   return [...new Set([...namesFromParams, ...namesFromRegex])];
 };
 
-const Personas = () => {
+const Personas = memo(() => {
   const [names, setNames] = useState([]);
   const [isMultiple, setIsMultiple] = useState(false); // Nueva variable
 
@@ -60,6 +60,8 @@ const Personas = () => {
       </div>
     </div>
   );
-};
+});
+
+Personas.displayName = "Personas";
 
 export default Personas;

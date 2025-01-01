@@ -1,6 +1,6 @@
-import { useState, useEffect, Children } from "react";
+import { useState, useEffect, Children, memo } from "react";
 
-const VerticalSlider = ({ children }) => {
+const VerticalSlider = memo(({ children }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -113,6 +113,8 @@ const VerticalSlider = ({ children }) => {
       </div>
     </div>
   );
-};
+});
+
+VerticalSlider.displayName = "VerticalSlider";
 
 export default VerticalSlider;
