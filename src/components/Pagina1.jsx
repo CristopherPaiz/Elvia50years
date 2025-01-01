@@ -2,7 +2,7 @@ import TextoAnimado from "./TextoAnimado";
 
 const Pagina1 = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-dvh">
       <div className="h-[100px] flex justify-start flex-col">
         <TextoAnimado dur={5000} delay={1}>
           <p className="handlee-regular text-4xl text-yellow-700">¡Brindemos por los</p>

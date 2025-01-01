@@ -70,11 +70,11 @@ const LugarFecha = () => {
       `Buenas ${timeOfDay}, ${formattedNames}. ${invitationText} asistencia a la celebración. ¡Gracias por la invitación!`
     );
 
-    window.open(`https://wa.me/50238639275?text=${encodedMessage}`, "_blank");
+    window.open(`https://wa.me/50230369227?text=${encodedMessage}`, "_blank");
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center min-h-dvh">
       <div className="max-w-md w-full m-4 p-10 rounded-lg shadow-lg bg-white/40 backdrop-blur-sm border-[3px] border-white">
         <h2 className="text-4xl font-bold text-center mb-12 mt-4 text-yellow-800">Lugar y Fecha</h2>
 

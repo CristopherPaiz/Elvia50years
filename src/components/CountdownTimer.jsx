@@ -59,7 +59,7 @@ const CountdownTimer = () => {
   }, []);
 
   return (
-    <div className="min-h-screen  flex flex-col items-center justify-center px-4">
+    <div className="min-h-dvh  flex flex-col items-center justify-center px-4">
       <h1 className="text-4xl  font-bold mb-4 md:mb-8 text-yellow-700">Días Faltantes</h1>
       <div className="flex items-center justify-center space-x-1 md:space-x-4">
         <TimeBox value={days} label="Días" />

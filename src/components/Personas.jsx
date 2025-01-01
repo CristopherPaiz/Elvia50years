@@ -31,7 +31,7 @@ const Personas = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full relative">
+    <div className="flex justify-center items-center h-dvh w-full relative">
       <div className="-z-10 absolute top-0 left-0 w-full h-full">
         <img
           className="w-full h-full object-contain"

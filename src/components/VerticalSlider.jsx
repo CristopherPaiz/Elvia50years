@@ -55,12 +55,7 @@ const VerticalSlider = ({ children }) => {
   };
 
   return (
-    <div
-      className="h-screen w-full relative overflow-hidden "
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+    <div className="h-dvh w-full relative overflow-hidden " onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       {/* Render de los hijos */}
       {Children.map(children, (child, index) => (
         <div
@@ -68,7 +63,7 @@ const VerticalSlider = ({ children }) => {
           style={{
             display: index === currentSlide ? "block" : "none",
           }}
-          className="h-screen w-full"
+          className="h-dvh w-full"
         >
           {child}
         </div>
