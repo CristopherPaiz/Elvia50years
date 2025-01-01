@@ -112,7 +112,6 @@ const VerticalSlider = ({ children }) => {
       html, body {
         overscroll-behavior: none;
         overflow: hidden;
-        touch-action: none;
       }
     `;
     document.head.appendChild(style);
