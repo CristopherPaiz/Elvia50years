@@ -87,7 +87,7 @@ const App = () => {
         <LugarFecha />
         <CountdownTimer />
       </VerticalSlider>
-      <ScrollDown dur={50000} />
+      <ScrollDown dur={10000} />
     </>
   );
 };

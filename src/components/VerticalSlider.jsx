@@ -71,9 +71,67 @@ const VerticalSlider = ({ children }) => {
     return () => window.removeEventListener("touchmove", preventPullToRefresh);
   }, []);
 
+  // Previene completamente el pull to refresh y comportamientos por defecto
+  useEffect(() => {
+    // Previene el pull to refresh
+    const preventPullToRefresh = (e) => {
+      e.preventDefault();
+    };
+
+    // Desactiva el scroll elástico en Safari
+    document.body.style.overscrollBehavior = "none";
+
+    // Listeners para prevenir diferentes comportamientos
+    window.addEventListener("touchstart", preventPullToRefresh, { passive: false });
+    window.addEventListener("touchmove", preventPullToRefresh, { passive: false });
+    window.addEventListener("touchend", preventPullToRefresh, { passive: false });
+
+    // Previene el zoom en dispositivos móviles
+    document.addEventListener("gesturestart", (e) => e.preventDefault());
+    document.addEventListener("gesturechange", (e) => e.preventDefault());
+    document.addEventListener("gestureend", (e) => e.preventDefault());
+
+    return () => {
+      // Restaura los estilos y remueve los listeners
+      document.body.style.overscrollBehavior = "auto";
+
+      window.removeEventListener("touchstart", preventPullToRefresh);
+      window.removeEventListener("touchmove", preventPullToRefresh);
+      window.removeEventListener("touchend", preventPullToRefresh);
+
+      document.removeEventListener("gesturestart", (e) => e.preventDefault());
+      document.removeEventListener("gesturechange", (e) => e.preventDefault());
+      document.removeEventListener("gestureend", (e) => e.preventDefault());
+    };
+  }, []);
+
+  // Añade estos estilos globales (puedes ponerlos en un archivo CSS global)
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      html, body {
+        overscroll-behavior: none;
+        overflow: hidden;
+        touch-action: none;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
-    <div className="h-dvh w-full relative overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
-      {/* Render de los hijos */}
+    <div
+      className="h-dvh w-full relative overflow-hidden touch-none select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      // Añade estos props para prevenir comportamientos por defecto
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
+    >
       {Children.map(children, (child, index) => (
         <div
           key={index}
@@ -87,7 +145,7 @@ const VerticalSlider = ({ children }) => {
       ))}
 
       {/* Botones de navegación */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-3">
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-4">
         {Children.map(children, (_, index) => (
           <button
             key={index}
