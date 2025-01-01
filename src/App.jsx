@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import CountdownTimer from "./components/CountdownTimer";
 import FondoAnimado from "./components/FondoAnimado";
 import LugarFecha from "./components/LugarFecha";
@@ -7,59 +7,52 @@ import Personas from "./components/Personas";
 import ScrollDown from "./components/ScrollDown";
 import VerticalSlider from "./components/VerticalSlider";
 import SONG from "./assets/birthday.mp3";
+import SILENCE from "./assets/silence.mp3"; // Archivo de audio silencioso
 
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(true);
-  const audioRef = useRef(null);
+  const realAudioRef = useRef(null);
+  const silentAudioRef = useRef(null);
 
-  // Verificar si el audio se reproduce automáticamente
   useEffect(() => {
-    const checkAutoPlay = () => {
-      if (audioRef.current && !audioRef.current.paused) {
-        setIsPlaying(true); // Si el audio está reproduciéndose, mantenemos "On"
-      } else {
-        setIsPlaying(false); // Si no se reproduce, ponemos "Off"
+    const handleAutoplay = async () => {
+      if (silentAudioRef.current) {
+        try {
+          // Reproducir el audio silencioso para habilitar autoplay
+          await silentAudioRef.current.play();
+          // Una vez habilitado, reproducir el audio real
+          if (realAudioRef.current) {
+            await realAudioRef.current.play();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log("Error al reproducir el audio:", error);
+          setIsPlaying(false); // Si falla, marcar como no reproduciendo
+        }
       }
     };
 
-    checkAutoPlay();
-
-    // Escuchar el evento de autoplay fallido y poner en "Off"
-    const handleAutoplayError = () => {
-      setIsPlaying(false); // Si el autoplay falla, se marca como "Off"
-    };
-
-    const audioElement = audioRef.current;
-    if (audioElement) {
-      audioElement.addEventListener("play", checkAutoPlay);
-      audioElement.addEventListener("error", handleAutoplayError);
-    }
-
-    // Cleanup event listeners
-    return () => {
-      if (audioElement) {
-        audioElement.removeEventListener("play", checkAutoPlay);
-        audioElement.removeEventListener("error", handleAutoplayError);
-      }
-    };
+    handleAutoplay();
   }, []);
 
   const togglePlayPause = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+    if (realAudioRef.current) {
+      if (isPlaying) {
+        realAudioRef.current.pause();
+      } else {
+        realAudioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (
     <>
-      {/* Audio element with autoplay and loop */}
-      <audio ref={audioRef} src={SONG} autoPlay loop style={{ display: "none" }} />
+      {/* Crear referencias para los audios en el DOM sin etiquetas explícitas */}
+      <div ref={silentAudioRef} data-src={SILENCE} style={{ display: "none" }}></div>
+      <div ref={realAudioRef} data-src={SONG} style={{ display: "none" }}></div>
 
       <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
-        {/* Button to toggle play/pause */}
         <button
           onClick={togglePlayPause}
           style={{
@@ -73,7 +66,6 @@ const App = () => {
             alignItems: "center",
           }}
         >
-          {/* Texto "On / Off" con subrayado dependiendo del estado */}
           <span>Audio: </span>
           <span style={{ textDecoration: isPlaying ? "underline" : "none" }}>On</span>
           <span style={{ marginLeft: "8px", textDecoration: !isPlaying ? "underline" : "none" }}>Off</span>
