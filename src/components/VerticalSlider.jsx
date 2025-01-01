@@ -8,6 +8,34 @@ const VerticalSlider = ({ children }) => {
 
   const minSwipeDistance = 50; // Distancia mínima para reconocer el deslizamiento
 
+  // Prevenir scroll por defecto
+  useEffect(() => {
+    const preventScroll = (e: WheelEvent) => {
+      // Prevenir el scroll por defecto
+      e.preventDefault();
+
+      // Navegación basada en la dirección del scroll
+      if (e.deltaY > 0) {
+        navigateSlide(1); // Scroll hacia abajo
+      } else if (e.deltaY < 0) {
+        navigateSlide(-1); // Scroll hacia arriba
+      }
+    };
+
+    // Opciones para el event listener
+    const options = {
+      passive: false, // Importante para poder llamar preventDefault()
+    };
+
+    // Agregar event listener para wheel
+    window.addEventListener("wheel", preventScroll, options);
+
+    // Limpiar el event listener
+    return () => {
+      window.removeEventListener("wheel", preventScroll, options);
+    };
+  }, [currentSlide]); // Dependencia para actualizar con el slide actual
+
   const navigateSlide = (direction) => {
     if (isTransitioning) return;
     const totalSlides = Children.count(children);
@@ -20,43 +48,10 @@ const VerticalSlider = ({ children }) => {
     }
   };
 
-  // Navegación por teclado
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowUp") navigateSlide(-1);
-      if (e.key === "ArrowDown") navigateSlide(1);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSlide]);
-
-  // Manejo del inicio del deslizamiento táctil
-  const handleTouchStart = (e) => {
-    setTouchEnd(null); // Reinicia el punto final
-    setTouchStart(e.targetTouches[0].clientY); // Obtén la posición inicial
-  };
-
-  // Manejo del movimiento táctil
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientY); // Actualiza la posición final
-  };
-
-  // Manejo del final del deslizamiento táctil
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isUpSwipe = distance > minSwipeDistance;
-    const isDownSwipe = distance < -minSwipeDistance;
-
-    if (isUpSwipe) navigateSlide(1);
-    if (isDownSwipe) navigateSlide(-1);
-  };
+  // Resto del código del componente permanece igual...
 
   return (
-    <div className="h-dvh w-full relative overflow-hidden " onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
-      {/* Render de los hijos */}
+    <div className="h-dvh w-full relative overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       {Children.map(children, (child, index) => (
         <div
           key={index}
@@ -68,7 +63,6 @@ const VerticalSlider = ({ children }) => {
           {child}
         </div>
       ))}
-
       {/* Botones de navegación */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
         {Children.map(children, (_, index) => (
