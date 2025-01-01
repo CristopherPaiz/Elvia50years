@@ -92,7 +92,7 @@ const VerticalSlider = ({ children }) => {
           <button
             key={index}
             onClick={() => !isTransitioning && setCurrentSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            className={`size-4 rounded-full transition-all duration-300 ${
               currentSlide === index ? "bg-yellow-500 scale-150" : "bg-gray-300 hover:bg-gray-400"
             }`}
             aria-label={`Go to slide ${index + 1}`}
