@@ -31,7 +31,7 @@ const FondoAnimado = () => {
             transform: translateY(0) translateX(0);
           }
           50% {
-            transform: translateY(-10px) translateX(10px);
+            transform: translateY(-10px) translateX(20px);
           }
           100% {
             transform: translateY(0) translateX(0);
@@ -42,7 +42,7 @@ const FondoAnimado = () => {
             transform: translateY(0) rotate(0deg);
           }
           50% {
-            transform: translateY(-20px) rotate(15deg);
+            transform: translateY(-20px) rotate(25deg);
           }
           100% {
             transform: translateY(0) rotate(0deg);
