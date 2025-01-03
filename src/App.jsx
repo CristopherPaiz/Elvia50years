@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import CountdownTimer from "./components/CountdownTimer";
 import FondoAnimado from "./components/FondoAnimado";
 import LugarFecha from "./components/LugarFecha";
@@ -7,51 +7,78 @@ import Personas from "./components/Personas";
 import ScrollDown from "./components/ScrollDown";
 import VerticalSlider from "./components/VerticalSlider";
 import SONG from "./assets/birthday.mp3";
-import SILENCE from "./assets/silence.mp3"; // Archivo de silencio
 
 const App = () => {
-  const [isPlaying, setIsPlaying] = useState(true);
-  const realAudioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
+  const audioRef = useRef(null);
 
-  useEffect(() => {
-    // Autoplay usando iframe con audio silencioso
-    const silentIframe = document.createElement("iframe");
-    silentIframe.src = SILENCE;
-    silentIframe.allow = "autoplay";
-    silentIframe.style.display = "none";
-    document.body.appendChild(silentIframe);
-
-    // Intentar reproducir el audio real después del iframe
-    silentIframe.onload = () => {
-      if (realAudioRef.current) {
-        realAudioRef.current.play().catch(() => {
-          setIsPlaying(false); // Si no se puede reproducir, desactivamos "On"
-        });
+  const handleFirstInteraction = async (e) => {
+    // Solo activamos el audio en el click/tap final, no en el scroll o deslizamiento
+    if (e.type === "click") {
+      try {
+        if (audioRef.current) {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.log("Error al reproducir el audio:", error);
+      } finally {
+        setShowOverlay(false);
       }
-    };
+    }
+  };
 
-    return () => {
-      document.body.removeChild(silentIframe); // Eliminar iframe al desmontar
-    };
-  }, []);
+  const handleTouchStart = (e) => {
+    // Permitir que el evento touchstart se propague
+    e.stopPropagation();
+  };
 
-  const togglePlayPause = () => {
-    if (realAudioRef.current) {
-      if (isPlaying) {
-        realAudioRef.current.pause();
-      } else {
-        realAudioRef.current.play();
+  const handleTouchMove = (e) => {
+    // Permitir que el evento touchmove se propague
+    e.stopPropagation();
+  };
+
+  const togglePlayPause = async () => {
+    if (audioRef.current) {
+      try {
+        if (isPlaying) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.log("Error al toggle audio:", error);
+        setIsPlaying(false);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
   return (
     <>
-      {/* Audio real para reproducción */}
-      <audio ref={realAudioRef} src={SONG} loop style={{ display: "none" }} />
+      {/* Div invisible que permite deslizamiento */}
+      {showOverlay && (
+        <div
+          onClick={handleFirstInteraction}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 9999,
+            touchAction: "auto", // Permite el comportamiento táctil normal
+            pointerEvents: "auto", // Permite interacciones pero mantiene la transparencia
+          }}
+        />
+      )}
 
-      {/* Botón para controlar el audio */}
+      <audio ref={audioRef} src={SONG} loop preload="auto" style={{ display: "none" }} />
+
       <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
         <button
           onClick={togglePlayPause}
@@ -72,7 +99,6 @@ const App = () => {
         </button>
       </div>
 
-      {/* Contenido principal */}
       <FondoAnimado />
       <VerticalSlider>
         <Pagina1 />
