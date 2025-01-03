@@ -35,7 +35,7 @@ const App = () => {
     return (
       <div
         onClick={handleStart}
-        className="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 cursor-pointer"
+        className="h-dvh w-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 cursor-pointer"
       >
         <div className="w-32 h-32 bg-white rounded-full shadow-lg flex items-center justify-center">
           <i className="fas fa-envelope text-pink-500 text-6xl"></i>
