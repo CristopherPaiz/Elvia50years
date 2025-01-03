@@ -12,15 +12,15 @@ const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
   const audioRef = useRef(null);
+  const touchStartY = useRef(null);
+  const hasInteractedRef = useRef(false);
 
-  const handleFirstInteraction = async (e) => {
-    // Solo activamos el audio en el click/tap final, no en el scroll o deslizamiento
-    if (e.type === "click") {
+  const tryPlayAudio = async () => {
+    if (!hasInteractedRef.current && audioRef.current) {
+      hasInteractedRef.current = true;
       try {
-        if (audioRef.current) {
-          await audioRef.current.play();
-          setIsPlaying(true);
-        }
+        await audioRef.current.play();
+        setIsPlaying(true);
       } catch (error) {
         console.log("Error al reproducir el audio:", error);
       } finally {
@@ -30,13 +30,19 @@ const App = () => {
   };
 
   const handleTouchStart = (e) => {
-    // Permitir que el evento touchstart se propague
-    e.stopPropagation();
+    touchStartY.current = e.touches[0].clientY;
   };
 
   const handleTouchMove = (e) => {
-    // Permitir que el evento touchmove se propague
-    e.stopPropagation();
+    if (touchStartY.current === null) return;
+
+    const currentY = e.touches[0].clientY;
+    const diff = Math.abs(currentY - touchStartY.current);
+
+    // Si el usuario ha deslizado más de 10px, consideramos que es un deslizamiento intencional
+    if (diff > 10) {
+      tryPlayAudio();
+    }
   };
 
   const togglePlayPause = async () => {
@@ -58,28 +64,24 @@ const App = () => {
 
   return (
     <>
-      {/* Div invisible que permite deslizamiento */}
-      {showOverlay && (
-        <div
-          onClick={handleFirstInteraction}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 9999,
-            touchAction: "auto", // Permite el comportamiento táctil normal
-            pointerEvents: "auto", // Permite interacciones pero mantiene la transparencia
-          }}
-        />
-      )}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 9999,
+          pointerEvents: showOverlay ? "auto" : "none",
+          touchAction: "pan-y", // Permite el deslizamiento vertical
+        }}
+      />
 
       <audio ref={audioRef} src={SONG} loop preload="auto" style={{ display: "none" }} />
 
-      <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+      <div style={{ position: "absolute", top: 10, right: 10, zIndex: 10000 }}>
         <button
           onClick={togglePlayPause}
           style={{
