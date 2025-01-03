@@ -37,10 +37,33 @@ const App = () => {
         onClick={handleStart}
         className="h-dvh w-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 cursor-pointer"
       >
-        <div className="w-32 h-32 bg-white rounded-full shadow-lg flex items-center justify-center">
-          <i className="fas fa-envelope text-pink-500 text-6xl"></i>
+        <div className="envelope-container">
+          <i className="fas fa-envelope text-pink-500 text-8xl"></i>
         </div>
-        <span className="mt-4 text-lg font-medium text-gray-700">Toca para empezar</span>
+        <span className="mt-4 text-3xl font-medium text-gray-700">Toca para empezar</span>
+        <style>{`
+          .envelope-container {
+            width: 10rem;
+            height: 10rem;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: heartbeat 1.5s infinite;
+          }
+
+          @keyframes heartbeat {
+            0%,
+            100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.1);
+            }
+          }
+        `}</style>
       </div>
     );
   }
