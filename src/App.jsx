@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CountdownTimer from "./components/CountdownTimer";
 import FondoAnimado from "./components/FondoAnimado";
 import LugarFecha from "./components/LugarFecha";
@@ -10,94 +10,58 @@ import SONG from "./assets/birthday.mp3";
 
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
   const audioRef = useRef(null);
-  const touchStartY = useRef(null);
-  const hasInteractedRef = useRef(false);
 
-  const tryPlayAudio = async () => {
-    if (!hasInteractedRef.current && audioRef.current) {
-      hasInteractedRef.current = true;
+  useEffect(() => {
+    // Crear el elemento de audio
+    audioRef.current = new Audio(SONG);
+    audioRef.current.loop = true;
+  }, []);
+
+  const handleStart = async () => {
+    if (audioRef.current) {
       try {
         await audioRef.current.play();
         setIsPlaying(true);
+        setHasStarted(true);
       } catch (error) {
         console.log("Error al reproducir el audio:", error);
-      } finally {
-        setShowOverlay(false);
       }
     }
   };
 
-  const handleTouchStart = (e) => {
-    touchStartY.current = e.touches[0].clientY;
-  };
-
-  const handleTouchMove = (e) => {
-    if (touchStartY.current === null) return;
-
-    const currentY = e.touches[0].clientY;
-    const diff = Math.abs(currentY - touchStartY.current);
-
-    // Si el usuario ha deslizado más de 10px, consideramos que es un deslizamiento intencional
-    if (diff > 10) {
-      tryPlayAudio();
-    }
-  };
-
-  const togglePlayPause = async () => {
-    if (audioRef.current) {
-      try {
-        if (isPlaying) {
-          audioRef.current.pause();
-          setIsPlaying(false);
-        } else {
-          await audioRef.current.play();
-          setIsPlaying(true);
-        }
-      } catch (error) {
-        console.log("Error al toggle audio:", error);
-        setIsPlaying(false);
-      }
-    }
-  };
+  if (!hasStarted) {
+    return (
+      <div
+        onClick={handleStart}
+        className="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 cursor-pointer"
+      >
+        <div className="w-32 h-32 bg-white rounded-full shadow-lg flex items-center justify-center">
+          <i className="fas fa-envelope text-pink-500 text-6xl"></i>
+        </div>
+        <span className="mt-4 text-lg font-medium text-gray-700">Toca para empezar</span>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 9999,
-          pointerEvents: showOverlay ? "auto" : "none",
-          touchAction: "pan-y", // Permite el deslizamiento vertical
-        }}
-      />
-
-      <audio ref={audioRef} src={SONG} loop preload="auto" style={{ display: "none" }} />
-
-      <div style={{ position: "absolute", top: 10, right: 10, zIndex: 10000 }}>
+      <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={togglePlayPause}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
-            display: "flex",
-            alignItems: "center",
+          onClick={() => {
+            if (isPlaying) {
+              audioRef.current.pause();
+            } else {
+              audioRef.current.play();
+            }
+            setIsPlaying(!isPlaying);
           }}
+          className="px-4 py-2 bg-white rounded shadow-md flex items-center space-x-2"
         >
           <span>Audio: </span>
-          <span style={{ textDecoration: isPlaying ? "underline" : "none" }}>On</span>
-          <span style={{ marginLeft: "8px", textDecoration: !isPlaying ? "underline" : "none" }}>Off</span>
+          <span className={isPlaying ? "underline" : ""}>On</span>
+          <span className={!isPlaying ? "underline" : ""}>Off</span>
         </button>
       </div>
 
