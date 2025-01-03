@@ -17,7 +17,23 @@ const App = () => {
     // Crear el elemento de audio
     audioRef.current = new Audio(SONG);
     audioRef.current.loop = true;
-  }, []);
+
+    // Manejar el evento visibilitychange
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else if (isPlaying) {
+        audioRef.current.play();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isPlaying]);
 
   const handleStart = async () => {
     if (audioRef.current) {
