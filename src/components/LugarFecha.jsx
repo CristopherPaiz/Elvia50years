@@ -58,19 +58,12 @@ const LugarFecha = memo(() => {
     return "noches";
   };
 
-  const handleWhatsAppClick = () => {
+  const getWhatsAppURL = () => {
     const formattedNames = formatNames(names);
     const timeOfDay = getTimeOfDay();
-
-    // Determinar si es una o varias personas
     const invitationText = names.length > 1 ? "Confirmamos nuestra" : "Confirmo mi";
-
-    // Mensaje a enviar
-    const encodedMessage = encodeURIComponent(
-      `Buenas ${timeOfDay}, ${formattedNames}. ${invitationText} asistencia a la celebración. ¡Gracias por la invitación!`
-    );
-
-    window.open(`https://wa.me/50230369227?text=${encodedMessage}`, "_blank");
+    const message = `Buenas ${timeOfDay}, ${formattedNames}. ${invitationText} asistencia a la celebración. ¡Gracias por la invitación!`;
+    return `https://wa.me/50230369227?text=${encodeURIComponent(message)}`;
   };
 
   return (
@@ -126,13 +119,15 @@ const LugarFecha = memo(() => {
               Cómo llegar
             </a>
 
-            <button
-              onClick={handleWhatsAppClick}
+            <a
+              href={getWhatsAppURL()}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
             >
               <i className="fab fa-whatsapp w-5 h-5" />
               Confirmar Asistencia
-            </button>
+            </a>
           </div>
 
           <div className="w-full flex justify-center items-center">
