@@ -45,7 +45,7 @@ const Personas = memo(() => {
       <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center z-10 p-14">
         <div className="sm:max-w-[350px]">
           <div className="-mt-6 mb-3 w-full flex justify-center items-center">
-            <img className="size-24 rounded-full border-2 border-yellow-600" src={Elvia} alt="Foto de perfil" />
+            <img className="size-28 rounded-full border-2 border-yellow-600 -mt-4" src={Elvia} alt="Foto de perfil" />
           </div>
           <div className="text-center text-xl font-semibold mb-4">
             <p className="text-bold text-2xl italic text-wrap mb-2">{formatNames(names)}</p>

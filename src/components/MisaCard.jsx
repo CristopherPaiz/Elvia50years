@@ -1,21 +1,23 @@
-const InvitationCard = () => {
+import { memo } from "react";
+
+const MisaCard = memo(() => {
   return (
     <div className="flex items-center justify-center h-dvh">
       <div className="w-[85%] md:max-w-sm mx-auto bg-white/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden">
         {/* Mensaje de Agradecimiento */}
         <div className="bg-purple-100 p-4 text-center text-purple-800">
-          <p className="text-[15px] p-3">
-            Antes de celebrar, queremos dar gracias a Dios por todas sus bendiciones. Por eso, te invitamos a acompañarnos en esta
+          <p className="text-[15px] p-2">
+            Pero antes de celebrar, queremos dar gracias a Dios por todas sus bendiciones. Por eso, te invitamos a acompañarnos en esta
           </p>
         </div>
         {/* Header Section */}
-        <div className="bg-yellow-600 text-white p-6 text-center">
-          <h1 className="text-2xl font-bold mb-2">Santa Misa por</h1>
-          <p className="text-lg">Celebración de 50 Años</p>
+        <div className="bg-yellow-600 text-white px-4 py-6 text-center">
+          <h1 className="text-xl font-bold mb-2">Santa Misa por</h1>
+          <p className="text-2xl">Celebración de 50 Años</p>
         </div>
 
         {/* Image Section */}
-        <div className="relative h-48 w-full">
+        <div className="relative h-40 w-full">
           <img src="/parroquia.webp" alt="Parroquia Sagrada Familia" className="w-full h-full object-cover" />
         </div>
 
@@ -51,6 +53,8 @@ const InvitationCard = () => {
       </div>
     </div>
   );
-};
+});
 
-export default InvitationCard;
+MisaCard.displayName = "MisaCard";
+
+export default MisaCard;
