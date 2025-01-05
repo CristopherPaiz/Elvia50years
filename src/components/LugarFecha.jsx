@@ -53,16 +53,16 @@ const LugarFecha = memo(() => {
 
   const getTimeOfDay = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "días";
-    if (hour < 18) return "tardes";
-    return "noches";
+    if (hour < 12) return "Buenos días";
+    if (hour < 18) return "Buenas tardes";
+    return "Buenas noches";
   };
 
   const getWhatsAppURL = () => {
     const formattedNames = formatNames(names);
     const timeOfDay = getTimeOfDay();
     const invitationText = names.length > 1 ? "Confirmamos nuestra" : "Confirmo mi";
-    const message = `Buenas ${timeOfDay}, ${formattedNames}. ${invitationText} asistencia a la celebración. ¡Gracias por la invitación!`;
+    const message = `${timeOfDay}, ${formattedNames}. ${invitationText} asistencia a la celebración. ¡Gracias por la invitación!`;
     return `https://wa.me/50230369227?text=${encodeURIComponent(message)}`;
   };
 
