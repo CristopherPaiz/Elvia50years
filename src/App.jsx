@@ -7,33 +7,70 @@ import Personas from "./components/Personas";
 import ScrollDown from "./components/ScrollDown";
 import VerticalSlider from "./components/VerticalSlider";
 import SONG from "./assets/birthday.mp3";
+import MisaCard from "./components/MisaCard";
 
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const audioRef = useRef(null);
+  const wasPlayingRef = useRef(false);
 
   useEffect(() => {
-    // Crear el elemento de audio
     audioRef.current = new Audio(SONG);
     audioRef.current.loop = true;
 
-    // Manejar el evento visibilitychange
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else if (isPlaying) {
-        audioRef.current.play();
+        if (!audioRef.current.paused) {
+          wasPlayingRef.current = true;
+          audioRef.current.pause();
+          setIsPlaying(false);
+        }
+      } else if (wasPlayingRef.current) {
+        audioRef.current.play().catch((e) => console.log("Error resuming audio:", e));
+        setIsPlaying(true);
+        wasPlayingRef.current = false;
       }
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    const handleBlur = () => {
+      if (!audioRef.current.paused) {
+        wasPlayingRef.current = true;
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+    };
 
+    const handleFocus = () => {
+      if (wasPlayingRef.current) {
+        audioRef.current.play().catch((e) => console.log("Error resuming audio:", e));
+        setIsPlaying(true);
+        wasPlayingRef.current = false;
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
+
+    // Page Visibility API para mobile
+    document.addEventListener("pause", handleBlur);
+    document.addEventListener("resume", handleFocus);
+
+    // Cleanup event listeners
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("pause", handleBlur);
+      document.removeEventListener("resume", handleFocus);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
-  }, [isPlaying]);
+  }, []);
 
   const handleStart = async () => {
     if (audioRef.current) {
@@ -91,8 +128,9 @@ const App = () => {
           onClick={() => {
             if (isPlaying) {
               audioRef.current.pause();
+              wasPlayingRef.current = false;
             } else {
-              audioRef.current.play();
+              audioRef.current.play().catch((e) => console.log("Error playing audio:", e));
             }
             setIsPlaying(!isPlaying);
           }}
@@ -108,6 +146,7 @@ const App = () => {
       <VerticalSlider>
         <Pagina1 />
         <Personas />
+        <MisaCard />
         <LugarFecha />
         <CountdownTimer />
       </VerticalSlider>
