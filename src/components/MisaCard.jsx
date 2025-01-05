@@ -47,7 +47,7 @@ const MisaCard = memo(() => {
               <i className="fas fa-glass-cheers w-5 h-5"></i>
               <span className="font-semibold">Después de la Misa</span>
             </div>
-            <p className="text-sm">Te invitamos a acompañarnos a...</p>
+            <p className="text-sm">Les invitamos a acompañarnos a...</p>
           </div>
         </div>
       </div>
